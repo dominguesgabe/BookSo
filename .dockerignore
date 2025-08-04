@@ -5,3 +5,4 @@
 .idea
 .pre-commit-config.yaml
 .travis.yml
+/venv

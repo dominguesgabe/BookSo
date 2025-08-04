@@ -1,0 +1,11 @@
+asgiref==3.9.1
+Django==5.2.4
+djangorestframework==3.16.0
+markdown-it-py==3.0.0
+mdurl==0.1.2
+psycopg2-binary==2.9.10
+Pygments==2.19.2
+python-decouple==3.8
+rich==14.1.0
+sqlparse==0.5.3
+gunicorn==23.0.0

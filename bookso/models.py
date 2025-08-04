@@ -7,16 +7,6 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
-    # GENRE_CHOICES = [
-    #     ("romance", "Romance"),
-    #     ("thriller", "Terror"),
-    #     ("sci-fi", "Ficção Científica"),
-    #     ("fantasy", "Fantasia"),
-    #     ("adventure", "Aventura"),
-    #     ("self-help", "Autoajuda"),
-    #     ("educative", "Educativo"),
-    # ]
-
 
 class Book(models.Model):
     title = models.CharField(max_length=150)
