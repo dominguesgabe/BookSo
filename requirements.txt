@@ -8,4 +8,3 @@ Pygments==2.19.2
 python-decouple==3.8
 rich==14.1.0
 sqlparse==0.5.3
-gunicorn==23.0.0
