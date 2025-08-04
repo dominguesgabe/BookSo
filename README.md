@@ -29,3 +29,9 @@ docker compose run django-web python manage.py createsuperuser
 ### Django Admin
 
 The admin will be available at [localhost:8000/](http://localhost:8000/admin)
+
+---
+
+## Modeling and Features
+
+Access the [ER Diagram](https://dbdiagram.io/d/BookSo-68913b30dd90d1786567c155)
