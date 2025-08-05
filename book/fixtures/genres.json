@@ -1,18 +1,18 @@
 [
-  { "model": "bookso.genre", "pk": 1, "fields": { "name": "Thriller" } },
-  { "model": "bookso.genre", "pk": 2, "fields": { "name": "Romance" } },
+  { "model": "book.genre", "pk": 1, "fields": { "name": "Thriller" } },
+  { "model": "book.genre", "pk": 2, "fields": { "name": "Romance" } },
   {
-    "model": "bookso.genre",
+    "model": "book.genre",
     "pk": 3,
     "fields": { "name": "Ficção Científica" }
   },
-  { "model": "bookso.genre", "pk": 4, "fields": { "name": "Fantasia" } },
-  { "model": "bookso.genre", "pk": 5, "fields": { "name": "Aventura" } },
-  { "model": "bookso.genre", "pk": 6, "fields": { "name": "Autoajuda" } },
-  { "model": "bookso.genre", "pk": 7, "fields": { "name": "Educativo" } },
-  { "model": "bookso.genre", "pk": 8, "fields": { "name": "Ação" } },
-  { "model": "bookso.genre", "pk": 9, "fields": { "name": "Aventura" } },
-  { "model": "bookso.genre", "pk": 10, "fields": { "name": "Quadrinhos" } },
-  { "model": "bookso.genre", "pk": 11, "fields": { "name": "Infantojuvenil" } },
-  { "model": "bookso.genre", "pk": 12, "fields": { "name": "Passatempo" } }
+  { "model": "book.genre", "pk": 4, "fields": { "name": "Fantasia" } },
+  { "model": "book.genre", "pk": 5, "fields": { "name": "Aventura" } },
+  { "model": "book.genre", "pk": 6, "fields": { "name": "Autoajuda" } },
+  { "model": "book.genre", "pk": 7, "fields": { "name": "Educativo" } },
+  { "model": "book.genre", "pk": 8, "fields": { "name": "Ação" } },
+  { "model": "book.genre", "pk": 9, "fields": { "name": "Aventura" } },
+  { "model": "book.genre", "pk": 10, "fields": { "name": "Quadrinhos" } },
+  { "model": "book.genre", "pk": 11, "fields": { "name": "Infantojuvenil" } },
+  { "model": "book.genre", "pk": 12, "fields": { "name": "Passatempo" } }
 ]
