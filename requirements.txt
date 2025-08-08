@@ -4,9 +4,13 @@ djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.1
 markdown-it-py==3.0.0
 mdurl==0.1.2
+mypy==1.17.1
+mypy_extensions==1.1.0
+pathspec==0.12.1
 psycopg2-binary==2.9.10
 Pygments==2.19.2
 PyJWT==2.10.1
 python-decouple==3.8
 rich==14.1.0
 sqlparse==0.5.3
+typing_extensions==4.14.1
