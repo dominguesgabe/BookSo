@@ -10,7 +10,7 @@ class GenreInline(admin.StackedInline):
 
 class BookAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {"fields": ["title", "language", "page_number", "genres"]}),
+        (None, {"fields": ["name", "language", "page_number", "genres"]}),
         ("Date information", {"fields": ["publish_date"]}),
     ]
     readonly_fields = ["created_at"]
