@@ -16,7 +16,3 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def post(self, request, *args, **kwargs):
-        print("aaaa desgraca")
-        return self.create(request, *args, **kwargs)
