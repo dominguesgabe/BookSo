@@ -17,4 +17,6 @@ class BookViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    # readonly auth is not needed
+    def post(self, request, *args, **kwargs):
+        print("aaaa desgraca")
+        return self.create(request, *args, **kwargs)

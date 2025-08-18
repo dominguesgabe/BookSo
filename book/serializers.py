@@ -7,26 +7,32 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = ["name"]
+        fields = ["id", "name"]
 
 
 class BookSerializer(serializers.ModelSerializer):
     queryset = Book.objects.all()
 
     name = serializers.CharField()
-    genres = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
     language = serializers.CharField()
     publish_date = serializers.DateField()
     page_number = serializers.IntegerField()
     book_type = serializers.CharField()
+    genres = GenreSerializer(many=True, read_only=True)
+
+    genre_ids = serializers.PrimaryKeyRelatedField(
+        many=True, source="genres", queryset=Genre.objects.all(), write_only=True
+    )
 
     class Meta:
         model = Book
         fields = [
+            "id",
             "name",
-            "genres",
             "language",
             "publish_date",
             "page_number",
             "book_type",
+            "genre_ids",
+            "genres",
         ]
