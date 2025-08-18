@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import (
 )
 
 router = DefaultRouter()
+router.register(r"books", views.BookViewSet, basename="book")
 router.register(r"genres", views.GenreViewSet, basename="genre")
 
 urlpatterns = [
