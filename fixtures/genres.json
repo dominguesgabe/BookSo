@@ -1,0 +1,18 @@
+[
+  { "model": "book.genre", "pk": 1, "fields": { "name": "Thriller" } },
+  { "model": "book.genre", "pk": 2, "fields": { "name": "Romance" } },
+  {
+    "model": "book.genre",
+    "pk": 3,
+    "fields": { "name": "Ficção Científica" }
+  },
+  { "model": "book.genre", "pk": 4, "fields": { "name": "Fantasia" } },
+  { "model": "book.genre", "pk": 5, "fields": { "name": "Aventura" } },
+  { "model": "book.genre", "pk": 6, "fields": { "name": "Autoajuda" } },
+  { "model": "book.genre", "pk": 7, "fields": { "name": "Educativo" } },
+  { "model": "book.genre", "pk": 8, "fields": { "name": "Ação" } },
+  { "model": "book.genre", "pk": 9, "fields": { "name": "Aventura" } },
+  { "model": "book.genre", "pk": 10, "fields": { "name": "Quadrinhos" } },
+  { "model": "book.genre", "pk": 11, "fields": { "name": "Infantojuvenil" } },
+  { "model": "book.genre", "pk": 12, "fields": { "name": "Passatempo" } }
+]
