@@ -17,7 +17,7 @@ class BookSerializer(serializers.ModelSerializer):
     language = serializers.CharField()
     publish_date = serializers.DateField()
     page_number = serializers.IntegerField()
-    book_type = serializers.CharField()
+    book_type = serializers.ChoiceField(choices=Book.BOOK_TYPE_CHOICES)
     genres = GenreSerializer(many=True, read_only=True)
 
     genre_ids = serializers.PrimaryKeyRelatedField(

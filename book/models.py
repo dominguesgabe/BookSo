@@ -9,10 +9,10 @@ class Genre(models.Model):
 
 
 class Book(models.Model):
-    BOOK_TYPE_CHOICES = {
-        "physical": "Livro físico",
-        "ebook": "E-book",
-    }
+    BOOK_TYPE_CHOICES = [
+        ("physical", "Livro físico"),
+        ("ebook", "E-book"),
+    ]
 
     name = models.CharField(max_length=150)
     genres = models.ManyToManyField(Genre, blank=True)
