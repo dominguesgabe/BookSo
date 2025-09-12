@@ -5,13 +5,19 @@ import uuid
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Cart(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     checked_out = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"cart {self.id} - {self.customer.user.username}"
 
 
 class Product(models.Model):

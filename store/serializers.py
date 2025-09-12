@@ -1,11 +1,20 @@
 from rest_framework import serializers
-from store.models import Cart
+from store.models import Cart, Customer
 
 
 class CartSerializer(serializers.ModelSerializer):
-    # customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    # created_at = models.DateTimeField(auto_now_add=True)
-    # checked_out = models.BooleanField(default=False)
+    customer = serializers.PrimaryKeyRelatedField(
+        many=False, source="genres", queryset=Customer.objects.all()
+    )
+
     class Meta:
         model = Cart
+        fields = ["id", "customer"]
+
+
+class CustomerSerializer(serializers.ModelSerializer):
+    queryset = Customer.objects.all()
+
+    class Meta:
+        model = Customer
         fields = ["id"]
