@@ -15,7 +15,7 @@ class Cart(models.Model):
 
 
 class Product(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="product")
     available_quantity = models.IntegerField()
     price = models.FloatField()
 
