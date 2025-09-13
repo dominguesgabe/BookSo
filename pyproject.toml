@@ -1,0 +1,20 @@
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+ignore_missing_imports = true
+plugins = [
+    "mypy_django_plugin.main",
+]
+
+disallow_untyped_globals = false
+
+[[tool.mypy.overrides]]
+module = "celery.*"
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+strict_settings = true

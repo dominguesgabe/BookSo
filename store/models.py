@@ -5,7 +5,10 @@ import uuid
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Cart(models.Model):
@@ -13,17 +16,26 @@ class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     checked_out = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"cart {self.id} - {self.customer.user.username}"
+
 
 class Product(models.Model):
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="product")
     available_quantity = models.IntegerField()
     price = models.FloatField()
+
+    def __str__(self):
+        return self.book.name
 
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.cart.__str__()} - {self.product.__str__()}"
 
 
 class Order(models.Model):
@@ -39,9 +51,15 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=ORDER_STATUS_CHOICES)
 
+    def __str__(self):
+        return f"order {self.id}"
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     price = models.FloatField()
+
+    def __str__(self):
+        return self.product.__str__()

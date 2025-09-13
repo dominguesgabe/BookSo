@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-# from django.contrib.auth.models import User
 from .models import Book, Genre
 
 
@@ -16,5 +15,5 @@ class BookAdmin(admin.ModelAdmin):
     readonly_fields = ["created_at"]
 
 
-admin.site.register(Book, BookAdmin)
+admin.site.register(Book)
 admin.site.register(Genre)
