@@ -13,3 +13,7 @@ class BookAdmin(admin.ModelAdmin):
         ("Date information", {"fields": ["publish_date"]}),
     ]
     readonly_fields = ["created_at"]
+
+
+admin.site.register(Book)
+admin.site.register(Genre)

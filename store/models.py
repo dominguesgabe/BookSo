@@ -25,11 +25,17 @@ class Product(models.Model):
     available_quantity = models.IntegerField()
     price = models.FloatField()
 
+    def __str__(self):
+        return self.book.name
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.cart.__str__()} - {self.product.__str__()}"
 
 
 class Order(models.Model):
@@ -45,9 +51,15 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=ORDER_STATUS_CHOICES)
 
+    def __str__(self):
+        return f"order {self.id}"
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     price = models.FloatField()
+
+    def __str__(self):
+        return self.product.__str__()
