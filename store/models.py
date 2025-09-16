@@ -28,7 +28,11 @@ class Product(models.Model):
         (EBOOK, "E-book"),
     ]
 
-    book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="product")
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        related_name="product",
+    )
     available_quantity = models.IntegerField()
     price = models.FloatField()
     product_type = models.CharField(
