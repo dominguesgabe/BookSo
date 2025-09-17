@@ -57,3 +57,34 @@ class ProductViewSet(viewsets.ModelViewSet):
 
         product = serializer.save(**save_kwargs)
         return Response(ProductSerializer(product).data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance: Product = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        if serializer.validated_data.get("product_type"):
+            db_product = (
+                Product.objects.filter(
+                    book=instance.book,
+                    product_type=serializer.validated_data["product_type"],
+                )
+                .exclude(id=instance.id)
+                .first()
+            )
+
+            if db_product:
+                logger.info("Found product with same book and type.")
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST,
+                    data={
+                        "product_type": [
+                            "Já existe um produto associado ao livro com o mesmo tipo."
+                        ]
+                    },
+                )
+
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
