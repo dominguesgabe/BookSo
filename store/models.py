@@ -21,9 +21,23 @@ class Cart(models.Model):
 
 
 class Product(models.Model):
-    book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="product")
+    PHYSICAL = "physical"
+    EBOOK = "ebook"
+    PRODUCT_TYPE_CHOICES = [
+        (PHYSICAL, "Livro físico"),
+        (EBOOK, "E-book"),
+    ]
+
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.CASCADE,
+        related_name="product",
+    )
     available_quantity = models.IntegerField()
     price = models.FloatField()
+    product_type = models.CharField(
+        max_length=10, choices=PRODUCT_TYPE_CHOICES, default=PHYSICAL
+    )
 
     def __str__(self):
         return self.book.name
