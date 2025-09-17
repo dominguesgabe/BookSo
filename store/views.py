@@ -3,7 +3,6 @@ from rest_framework import viewsets, status
 from store.models import Cart, Customer, Product
 from store.permissions import IsOwner
 from store.serializers import CartSerializer, CustomerSerializer, ProductSerializer
-from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 import logging
 
@@ -30,13 +29,13 @@ class ProductViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
 
     def create(self, request, *args, **kwargs):
-        srlzr = ProductSerializer(data=request.data)
-        srlzr.is_valid(raise_exception=True)
+        serializer = ProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        db_book = srlzr.validated_data["book"]
+        db_book = serializer.validated_data["book"]
 
         db_product = Product.objects.filter(
-            book=db_book, product_type=srlzr.validated_data["product_type"]
+            book=db_book, product_type=serializer.validated_data["product_type"]
         ).exists()
 
         if db_product:
@@ -53,8 +52,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
 
         save_kwargs = {}
-        if srlzr.validated_data["product_type"] == "ebook":
+        if serializer.validated_data["product_type"] == "ebook":
             save_kwargs["available_quantity"] = 1
 
-        product = srlzr.save(**save_kwargs)
+        product = serializer.save(**save_kwargs)
         return Response(ProductSerializer(product).data, status=status.HTTP_201_CREATED)
