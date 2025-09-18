@@ -55,7 +55,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             )
 
         save_kwargs = {}
-        if serializer.validated_data["product_type"] == "ebook":
+        if serializer.validated_data["product_type"] == Product.DIGITAL:
             save_kwargs["available_quantity"] = 1
 
         product = serializer.save(**save_kwargs)

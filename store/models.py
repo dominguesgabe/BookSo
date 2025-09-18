@@ -22,10 +22,10 @@ class Cart(models.Model):
 
 class Product(models.Model):
     PHYSICAL = "physical"
-    EBOOK = "ebook"
+    DIGITAL = "digital"
     PRODUCT_TYPE_CHOICES = [
-        (PHYSICAL, "Livro físico"),
-        (EBOOK, "E-book"),
+        (PHYSICAL, "Físico"),
+        (DIGITAL, "Digital"),
     ]
 
     book = models.ForeignKey(
