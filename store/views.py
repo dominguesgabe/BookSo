@@ -1,7 +1,7 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import viewsets, status
 from store.models import Cart, Customer, Product
-from store.permissions import IsOwner
+from permissions import permissions
 from store.serializers import CartSerializer, CustomerSerializer, ProductSerializer
 from rest_framework.response import Response
 import logging
@@ -14,7 +14,7 @@ class CartViewSet(viewsets.ModelViewSet):
 
     serializer_class = CartSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsOwner]
+    permission_classes = [permissions.IsOwner]
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -27,6 +27,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAdminUserOrViewOnly]
 
     def create(self, request, *args, **kwargs):
         serializer = ProductSerializer(data=request.data)
