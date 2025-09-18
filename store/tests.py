@@ -54,7 +54,7 @@ class ProductAPITestCase(APITestCase):
         payload = {
             "available_quantity": 3,
             "price": 12,
-            "product_type": "ebook",
+            "product_type": Product.DIGITAL,
             "book_id": book.id,
         }
         self.inject_credentials()
@@ -75,7 +75,7 @@ class ProductAPITestCase(APITestCase):
         payload = {
             "available_quantity": 3,
             "price": 12,
-            "product_type": "ebook",
+            "product_type": Product.DIGITAL,
             "book_id": book.id,
         }
 
@@ -128,10 +128,10 @@ class ProductAPITestCase(APITestCase):
     # PATCH product should fail because already exists a product with same book and product_type
     def test_api_update_product_fail_product_type(self):
         book = Book.objects.all().first()
-        product = product_factory(book, product_type=Product.EBOOK)
+        product = product_factory(book, product_type=Product.DIGITAL)
         assert book is not None
 
-        self.assertEqual(product.product_type, Product.EBOOK)
+        self.assertEqual(product.product_type, Product.DIGITAL)
 
         url = f"{reverse('product-list')}{product.id}/"
         self.inject_credentials()
