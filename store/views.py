@@ -1,7 +1,6 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import viewsets, status
 from store.models import Cart, Customer, Product
-from store.permissions import IsOwner
 from permissions import permissions
 from store.serializers import CartSerializer, CustomerSerializer, ProductSerializer
 from rest_framework.response import Response
@@ -15,7 +14,7 @@ class CartViewSet(viewsets.ModelViewSet):
 
     serializer_class = CartSerializer
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsOwner]
+    permission_classes = [permissions.IsOwner]
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
