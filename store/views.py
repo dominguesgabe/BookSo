@@ -13,7 +13,8 @@ logger = logging.getLogger()
 
 class CartViewSet(
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    # mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
@@ -28,6 +29,14 @@ class CartViewSet(
         data = request.data
         # TODO: Create add to cart serializer
         return Response(data)
+
+    # this is not a real list, I want to have the user cart on this route
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        [customer, _] = Customer.objects.get_or_create(user=user)
+        [cart, _] = Cart.objects.get_or_create(customer=customer)
+
+        return Response(CartSerializer(cart).data, status=status.HTTP_200_OK)
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
