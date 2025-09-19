@@ -37,7 +37,7 @@ class ProductAPITestCase(APITestCase):
         db_product = Product.objects.all().first()
         assert db_product is not None
 
-        url = f"{reverse('product-list')}{db_product.id}/"
+        url = reverse("product-detail", kwargs={"pk": db_product.id})
         response = self.client.get(url)
 
         expected = ProductSerializer(db_product).data
@@ -114,7 +114,7 @@ class ProductAPITestCase(APITestCase):
         self.assertEqual(product.available_quantity, 10)
         self.assertEqual(product.price, 10.5)
 
-        url = f"{reverse('product-list')}{product.id}/"
+        url = reverse("product-detail", args=[product.id])
         self.inject_credentials()
         response = self.client.patch(url, {"available_quantity": 8, "price": 14.99})
 
@@ -133,7 +133,7 @@ class ProductAPITestCase(APITestCase):
 
         self.assertEqual(product.product_type, Product.DIGITAL)
 
-        url = f"{reverse('product-list')}{product.id}/"
+        url = reverse("product-detail", kwargs={"pk": product.id})
         self.inject_credentials()
         response = self.client.patch(url, {"product_type": Product.PHYSICAL})
 
@@ -148,7 +148,7 @@ class ProductAPITestCase(APITestCase):
         product = Product.objects.all().first()
         assert product is not None
 
-        url = f"{reverse('product-list')}{product.id}/"
+        url = reverse("product-detail", kwargs={"pk": product.id})
         self.inject_credentials()
         response = self.client.delete(url)
 
@@ -159,7 +159,7 @@ class ProductAPITestCase(APITestCase):
         product = Product.objects.all().first()
         assert product is not None
 
-        url = f"{reverse('product-list')}{product.id}/"
+        url = reverse("product-detail", kwargs={"pk": product.id})
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
