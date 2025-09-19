@@ -86,3 +86,8 @@ class CartSerializer(serializers.ModelSerializer):
             "created_at",
             "checked_out",
         ]
+
+
+class AddToCartSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)
