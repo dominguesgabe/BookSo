@@ -1,8 +1,9 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, mixins
+from rest_framework import permissions as rest_permissions
+from rest_framework.decorators import action
 from store.models import Cart, Customer, Product
 from permissions import permissions
-from rest_framework import permissions as rest_permissions
 from store.serializers import CartSerializer, CustomerSerializer, ProductSerializer
 from rest_framework.response import Response
 import logging
@@ -10,12 +11,23 @@ import logging
 logger = logging.getLogger()
 
 
-class CartViewSet(viewsets.ModelViewSet):
+class CartViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = Cart.objects.all()
 
     serializer_class = CartSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsOwnerOrAdminUser]
+
+    @action(detail=False, methods=["POST"], url_path="add")
+    def add_item(self, request):
+        data = request.data
+        # TODO: Create add to cart serializer
+        return Response(data)
 
 
 class CustomerViewSet(viewsets.ModelViewSet):

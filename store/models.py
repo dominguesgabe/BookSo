@@ -17,7 +17,7 @@ class Cart(models.Model):
     checked_out = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"cart {self.id} - {self.customer.user.username}"
+        return f"Cart {self.id} - {self.customer.user.username}"
 
 
 class Product(models.Model):
@@ -38,6 +38,7 @@ class Product(models.Model):
     product_type = models.CharField(
         max_length=10, choices=PRODUCT_TYPE_CHOICES, default=PHYSICAL
     )
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.book.name
@@ -47,6 +48,14 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
+    price = models.FloatField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.price is None:
+            # This thing is really cool
+            self.price = self.product.price
+
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.cart.__str__()} - {self.product.__str__()}"
