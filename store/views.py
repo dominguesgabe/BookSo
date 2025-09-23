@@ -43,6 +43,8 @@ class CartViewSet(
 
         response = add_to_cart(user=request.user, serializer=add_to_cart_serializer)
 
+        # improve response
+        # add test cases
         return response
 
     # this is not a real list, I want to have the user cart on this route

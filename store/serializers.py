@@ -63,10 +63,8 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     # Nested relationship
     product_name = serializers.CharField(source="product.book.name", read_only=True)
-    # product = ProductSerializer(many=False, read_only=True)
-    # quantity = serializers.IntegerField()
-    # price = serializers.FloatField()
 
+    # improve product relation
     class Meta:
         model = CartItem
         fields = ["id", "product", "product_name", "quantity", "price"]
