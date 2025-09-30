@@ -1,21 +1,59 @@
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework import viewsets, status
-from store.models import Cart, Customer, Product
-from permissions import permissions
-from rest_framework import permissions as rest_permissions
-from store.serializers import CartSerializer, CustomerSerializer, ProductSerializer
-from rest_framework.response import Response
 import logging
+
+from rest_framework import mixins, status, viewsets
+from rest_framework import permissions as rest_permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from permissions import permissions
+from store.models import Cart, Customer, Product
+from store.serializers import (
+    AddToCartSerializer,
+    CartSerializer,
+    CustomerSerializer,
+    ProductSerializer,
+)
+from store.services import add_to_cart
 
 logger = logging.getLogger()
 
 
-class CartViewSet(viewsets.ModelViewSet):
-    queryset = Cart.objects.all()
-
-    serializer_class = CartSerializer
+class CartViewSet(
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsOwnerOrAdminUser]
+
+    @action(detail=False, methods=["POST"], url_path="add")
+    def add(self, request):
+        if not request.user:
+            Response(
+                {
+                    "user": [
+                        "Você precisa estar logado para realizar esta ação. Faça login ou crie sua conta!"
+                    ]
+                },
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        add_to_cart_serializer = AddToCartSerializer(data=request.data)
+
+        response = add_to_cart(user=request.user, serializer=add_to_cart_serializer)
+
+        return response
+
+    # this is not a real list, I want to have the user cart on this route
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        customer, _ = Customer.objects.get_or_create(user=user)
+        cart, _ = Cart.objects.get_or_create(customer=customer)
+
+        cart_data = CartSerializer(cart).data
+
+        return Response(cart_data, status=status.HTTP_200_OK)
 
 
 class CustomerViewSet(viewsets.ModelViewSet):

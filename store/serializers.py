@@ -61,30 +61,32 @@ class ProductSerializer(serializers.ModelSerializer):
 class CartItemSerializer(serializers.ModelSerializer):
     queryset = CartItem.objects.all()
 
-    product = ProductSerializer(many=False, read_only=True)
-    quantity = serializers.IntegerField()
+    # Nested relationship
+    product_name = serializers.CharField(source="product.book.name", read_only=True)
+    product = ProductSerializer()
 
+    # improve product relation
     class Meta:
         model = CartItem
-        fields = ["id", "product", "quantity"]
+        fields = ["id", "product", "product_name", "quantity", "price"]
 
 
 class CartSerializer(serializers.ModelSerializer):
     queryset = Cart.objects.all()
 
-    customer = CustomerSerializer()
-    # cart_items = serializers.PrimaryKeyRelatedField(
-    #     many=True, source="id", queryset=CartItem.objects.all()
-    # )
-    created_at = serializers.DateTimeField(read_only=True)
-    checked_out = serializers.BooleanField()
+    # Nested relationship
+    items = CartItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Cart
         fields = [
             "id",
-            "customer",
-            # "cart_items",
+            "items",
             "created_at",
             "checked_out",
         ]
+
+
+class AddToCartSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)
