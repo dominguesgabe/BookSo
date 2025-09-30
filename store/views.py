@@ -1,19 +1,20 @@
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework import viewsets, status, mixins
+import logging
+
+from rest_framework import mixins, status, viewsets
 from rest_framework import permissions as rest_permissions
 from rest_framework.decorators import action
-from store.models import Cart, Customer, Product
-from store.services import add_to_cart
+from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from permissions import permissions
+from store.models import Cart, Customer, Product
 from store.serializers import (
+    AddToCartSerializer,
     CartSerializer,
     CustomerSerializer,
     ProductSerializer,
-    AddToCartSerializer,
-    UserSerializer,
 )
-from rest_framework.response import Response
-import logging
+from store.services import add_to_cart
 
 logger = logging.getLogger()
 
@@ -23,12 +24,11 @@ class CartViewSet(
     mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
-    # queryset = Cart.objects.all()
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsOwnerOrAdminUser]
 
     @action(detail=False, methods=["POST"], url_path="add")
-    def add_item(self, request):
+    def add(self, request):
         if not request.user:
             Response(
                 {
@@ -43,8 +43,6 @@ class CartViewSet(
 
         response = add_to_cart(user=request.user, serializer=add_to_cart_serializer)
 
-        # improve response
-        # add test cases
         return response
 
     # this is not a real list, I want to have the user cart on this route

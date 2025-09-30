@@ -63,6 +63,7 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     # Nested relationship
     product_name = serializers.CharField(source="product.book.name", read_only=True)
+    product = ProductSerializer()
 
     # improve product relation
     class Meta:
