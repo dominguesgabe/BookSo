@@ -70,13 +70,17 @@ class Order(models.Model):
         "Error": "Erro",
     }
 
-    code = models.UUIDField(default=uuid.uuid4, editable=False)
+    # code = models.UUIDField(default=uuid.uuid4, editable=False)
     total_price = models.FloatField()
+    status = models.CharField(
+        max_length=10, choices=ORDER_STATUS_CHOICES, default="pending"
+    )
+    cart = models.ForeignKey(Cart, on_delete=models.PROTECT, related_name="cart")
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=ORDER_STATUS_CHOICES)
+    checked_out_at = models.DateTimeField(null=True)
 
     def __str__(self):
-        return f"order {self.id}"
+        return f"Order #{self.id}"
 
 
 class OrderItem(models.Model):

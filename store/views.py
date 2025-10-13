@@ -3,8 +3,10 @@ import logging
 from rest_framework import mixins, status, viewsets
 from rest_framework import permissions as rest_permissions
 from rest_framework.decorators import action
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.generics import get_object_or_404
 
 from permissions import permissions
 from store.models import Cart, Customer, Product
@@ -14,7 +16,7 @@ from store.serializers import (
     CustomerSerializer,
     ProductSerializer,
 )
-from store.services import add_to_cart
+from store.services import cart_service, checkout_service
 
 logger = logging.getLogger()
 
@@ -41,7 +43,9 @@ class CartViewSet(
 
         add_to_cart_serializer = AddToCartSerializer(data=request.data)
 
-        response = add_to_cart(user=request.user, serializer=add_to_cart_serializer)
+        response = cart_service.add_to_cart(
+            user=request.user, serializer=add_to_cart_serializer
+        )
 
         return response
 
@@ -129,3 +133,14 @@ class ProductViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
 
         return Response(serializer.data)
+
+
+class CheckoutViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsOwnerOrAdminUser]
+
+    def create(self, request):
+        checkout_session = checkout_service.checkout(user=request.user)
+        return Response(
+            {"session_url": checkout_session.url}, status=status.HTTP_200_OK
+        )
