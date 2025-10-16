@@ -83,7 +83,7 @@ class CartSerializer(serializers.ModelSerializer):
             "id",
             "items",
             "created_at",
-            "checked_out",
+            "checked_out_at",
         ]
 
 

@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from book.models import Book
-import uuid
 
 
 class Customer(models.Model):
@@ -14,7 +13,7 @@ class Customer(models.Model):
 class Cart(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    checked_out = models.BooleanField(default=False)
+    checked_out_at = models.DateTimeField(null=True)
 
     def __str__(self):
         return f"Cart {self.id} - {self.customer.user.username}"
@@ -39,6 +38,7 @@ class Product(models.Model):
         max_length=10, choices=PRODUCT_TYPE_CHOICES, default=PHYSICAL
     )
     active = models.BooleanField(default=True)
+    external_id = models.CharField(null=True, default=None)
 
     def __str__(self):
         return self.book.name
@@ -70,24 +70,13 @@ class Order(models.Model):
         "Error": "Erro",
     }
 
-    # code = models.UUIDField(default=uuid.uuid4, editable=False)
     total_price = models.FloatField()
     status = models.CharField(
         max_length=10, choices=ORDER_STATUS_CHOICES, default="pending"
     )
-    cart = models.ForeignKey(Cart, on_delete=models.PROTECT, related_name="cart")
     created_at = models.DateTimeField(auto_now_add=True)
     checked_out_at = models.DateTimeField(null=True)
+    cart = models.ForeignKey(Cart, on_delete=models.PROTECT, null=True)
 
     def __str__(self):
         return f"Order #{self.id}"
-
-
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
-    price = models.FloatField()
-
-    def __str__(self):
-        return self.product.__str__()
