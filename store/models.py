@@ -20,6 +20,7 @@ class Cart(models.Model):
 
 
 class Product(models.Model):
+    # TODO change to literal
     PHYSICAL = "physical"
     DIGITAL = "digital"
     PRODUCT_TYPE_CHOICES = [
@@ -38,7 +39,7 @@ class Product(models.Model):
         max_length=10, choices=PRODUCT_TYPE_CHOICES, default=PHYSICAL
     )
     active = models.BooleanField(default=True)
-    external_id = models.CharField(null=True, default=None)
+    external_id = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.book.name
