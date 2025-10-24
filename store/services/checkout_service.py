@@ -1,11 +1,12 @@
 from decouple import config
-from typing import cast
+from typing import Any
 import stripe
 from store.models import Cart, Order, Customer, Product
 from store.serializers import (
     CartSerializer,
     ProductSerializer,
     ExternalProductSerializer,
+    DefaultPriceSerializer,
 )
 from django.contrib.auth.models import User
 from rest_framework.generics import get_object_or_404
@@ -68,26 +69,6 @@ def checkout_create(user: User):
 
 
 def create_product_on_checkout_platform(serializer: ProductSerializer) -> str:
-    serialized_external_product = _external_product_data_factory(serializer)
-
-    product = stripe.Product.create(**serialized_external_product.validated_data)
-
-    external_id = cast("str", product.default_price)
-
-    return external_id
-
-
-def update_product_on_checkout_platform(serializer: ProductSerializer):
-    serialized_external_product = _external_product_data_factory(serializer)
-
-    product_id = serialized_external_product.pop("id")
-
-    stripe.Product.modify(product_id, **serialized_external_product)
-
-
-def _external_product_data_factory(
-    serializer: ProductSerializer,
-):
     data = {
         "id": serializer.data["id"],
         "name": serializer.data["book"]["name"],
@@ -98,4 +79,37 @@ def _external_product_data_factory(
     serialized_external_product = ExternalProductSerializer(data=data)
     serialized_external_product.is_valid(raise_exception=True)
 
-    return serialized_external_product.validated_data
+    product = stripe.Product.create(**serialized_external_product.validated_data)
+
+    # frankenstein monster
+    assert product.default_price is not None
+    external_price_id = (
+        product.default_price.id
+        if isinstance(product.default_price, stripe.Price)
+        else product.default_price
+    )
+
+    return external_price_id
+
+
+def update_product_on_checkout_platform(
+    product_serializer: ProductSerializer, request_data: dict[str, Any]
+):
+    data = {
+        key: value
+        for key, value in {
+            "id": request_data.get("id"),
+            "name": request_data.get("name"),
+            "shippable": request_data.get("product_type") == Product.PHYSICAL,
+        }.items()
+        if value is not None
+    }
+
+    if price := request_data.get("price"):
+        external_price_id = product_serializer.data["external_price_id"]
+
+        new_price = DefaultPriceSerializer(data=(price * 100)).data
+        stripe.Price.modify(external_price_id, **new_price)
+        data["unit_amount_decimal"] = external_price_id
+
+    stripe.Product.modify(product_serializer.data["id"], **data)

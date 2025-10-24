@@ -45,7 +45,7 @@ class ProductSerializer(serializers.ModelSerializer):
     available_quantity = serializers.IntegerField()
     price = serializers.FloatField()
     product_type = serializers.ChoiceField(choices=Product.PRODUCT_TYPE_CHOICES)
-    external_id = serializers.CharField(max_length=250, read_only=True)
+    external_price_id = serializers.CharField(max_length=250, read_only=True)
 
     class Meta:
         model = Product
@@ -56,7 +56,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "product_type",
             "book",
             "book_id",
-            "external_id",
+            "external_price_id",
         ]
 
 
@@ -95,12 +95,12 @@ class AddToCartSerializer(serializers.Serializer):
 
 
 class DefaultPriceSerializer(serializers.Serializer):
-    currency = serializers.CharField(max_length=3, default="brl")
+    currency = serializers.CharField(max_length=3, allow_null=True, default="brl")
     unit_amount_decimal = serializers.FloatField()
 
 
 class ExternalProductSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
-    name = serializers.CharField(max_length=255)
-    shippable = serializers.BooleanField()
-    default_price_data = DefaultPriceSerializer()
+    id = serializers.IntegerField(required=False)
+    name = serializers.CharField(max_length=255, required=False)
+    shippable = serializers.BooleanField(required=False)
+    default_price_data = DefaultPriceSerializer(required=False)

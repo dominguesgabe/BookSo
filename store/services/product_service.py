@@ -2,6 +2,7 @@ import logging
 from typing import Any
 
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from rest_framework import status
 from store.serializers import ProductSerializer
 from store.models import Product
@@ -40,12 +41,13 @@ def create_product(*, payload: dict[str, Any]):
 
     product = serializer.save(**save_kwargs)
 
+    # shouldn't this block wrap everything?
     try:
-        external_id = checkout_service.create_product_on_checkout_platform(
+        external_price_id = checkout_service.create_product_on_checkout_platform(
             serializer=serializer
         )
 
-        product.external_id = external_id
+        product.external_price_id = external_price_id
         product.save()
 
     except stripe.InvalidRequestError:
@@ -64,14 +66,16 @@ def create_product(*, payload: dict[str, Any]):
 def update_product(self, request, *args, **kwargs):
     partial = kwargs.pop("partial", False)
     instance: Product = self.get_object()
-    serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    serializer: ProductSerializer = self.get_serializer(
+        instance, data=request.data, partial=partial
+    )
     serializer.is_valid(raise_exception=True)
 
-    if serializer.validated_data.get("product_type"):
+    if product_type := serializer.validated_data.get("product_type"):
         db_product = (
             Product.objects.filter(
                 book=instance.book,
-                product_type=serializer.validated_data["product_type"],
+                product_type=product_type,
             )
             .exclude(id=instance.id)
             .first()
@@ -90,11 +94,18 @@ def update_product(self, request, *args, **kwargs):
 
     self.perform_update(serializer)
 
+    # shouldnt this block wrap everything?
     try:
-        checkout_service.update_product_on_checkout_platform(serializer)
-    except Exception as error:
+        request_data = request.data
+        checkout_service.update_product_on_checkout_platform(serializer, request_data)
+    except ValidationError as error:
         return Response(
-            {"external_product": [error.__str__()]},
+            {"external_product": error.detail},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    except stripe.InvalidRequestError as error:
+        return Response(
+            {"external_product": error._message},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
