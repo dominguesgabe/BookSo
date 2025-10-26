@@ -95,21 +95,24 @@ def create_product_on_checkout_platform(serializer: ProductSerializer) -> str:
 def update_product_on_checkout_platform(
     product_serializer: ProductSerializer, request_data: dict[str, Any]
 ):
-    data = {
-        key: value
-        for key, value in {
-            "id": request_data.get("id"),
-            "name": request_data.get("name"),
-            "shippable": request_data.get("product_type") == Product.PHYSICAL,
-        }.items()
-        if value is not None
-    }
+    data = {}
+
+    if id := request_data.get("id"):
+        data["id"] = id
+
+    if name := request_data.get("name"):
+        data["name"] = name
+
+    if product_type := request_data.get("product_type"):
+        data["shippable"] = product_type == Product.PHYSICAL
 
     if price := request_data.get("price"):
-        external_price_id = product_serializer.data["external_price_id"]
+        # I was not able to update the existing price, TODO: try again
+        new_external_price = stripe.Price.create(
+            currency="brl",
+            unit_amount_decimal=str(price * 100),
+            product=product_serializer.data["id"],
+        )
+        data["default_price"] = new_external_price.id
 
-        new_price = DefaultPriceSerializer(data=(price * 100)).data
-        stripe.Price.modify(external_price_id, **new_price)
-        data["unit_amount_decimal"] = external_price_id
-
-    stripe.Product.modify(product_serializer.data["id"], **data)
+    stripe.Product.modify(str(product_serializer.data["id"]), **data)
