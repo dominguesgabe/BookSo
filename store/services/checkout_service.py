@@ -95,6 +95,7 @@ def create_product_on_checkout_platform(serializer: ProductSerializer) -> str:
 def update_product_on_checkout_platform(
     product_serializer: ProductSerializer, request_data: dict[str, Any]
 ):
+    product_id = str(product_serializer.data["id"])
     data = {}
 
     if id := request_data.get("id"):
@@ -111,8 +112,8 @@ def update_product_on_checkout_platform(
         new_external_price = stripe.Price.create(
             currency="brl",
             unit_amount_decimal=str(price * 100),
-            product=product_serializer.data["id"],
+            product=product_id,
         )
         data["default_price"] = new_external_price.id
 
-    stripe.Product.modify(str(product_serializer.data["id"]), **data)
+    stripe.Product.modify(product_id, **data)

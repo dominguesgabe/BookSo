@@ -92,10 +92,10 @@ def update_product(self, request, *args, **kwargs):
                 },
             )
 
-    self.perform_update(serializer)
-
     # shouldnt this block wrap everything?
     try:
+        self.perform_update(serializer)
+
         request_data = request.data
         checkout_service.update_product_on_checkout_platform(serializer, request_data)
     except ValidationError as error:

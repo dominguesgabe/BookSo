@@ -54,18 +54,18 @@ def customer_factory(user):
     return customer
 
 
-def cart_factory(user):
-    customer = customer_factory(user)
-    cart = Cart.objects.get_or_create(customer=customer)
+# def cart_factory(user):
+#     customer = customer_factory(user)
+#     cart = Cart.objects.get_or_create(customer=customer)
 
-    return cart
+#     return cart
 
 
-def cart_item_factory(user):
-    book = book_factory()
-    product = product_factory(book)
-    cart = cart_factory(user)
+# def cart_item_factory(user):
+#     book = book_factory()
+#     product = product_factory(book=book)
+#     cart = cart_factory(user)
 
-    cart_item = CartItem.objects.create(cart=cart, product=product)
+#     cart_item = CartItem.objects.create(cart=cart, product=product)
 
-    return cart_item
+#     return cart_item
