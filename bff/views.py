@@ -12,8 +12,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 def api_root(request, format=None):
     return Response(
         {
-            "books": reverse("book-list", request=request, format=format),
-            "genres": reverse("genre-list", request=request, format=format),
             "cart": reverse("cart-list", request=request, format=format),
             "customers": reverse("customer-list", request=request, format=format),
             "products": reverse("product-list", request=request, format=format),

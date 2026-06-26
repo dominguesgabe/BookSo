@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from store.models import Cart, CartItem, Customer, Product
 from django.contrib.auth.models import User
-from book.models import Book
-from book.serializers import BookSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,31 +36,25 @@ class CustomerSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     queryset = Product.objects.all()
 
-    book_id = serializers.PrimaryKeyRelatedField(
-        many=False, source="book", queryset=Book.objects.all(), write_only=True
-    )
-    book = BookSerializer(read_only=True)
     available_quantity = serializers.IntegerField()
     price = serializers.FloatField()
-    product_type = serializers.ChoiceField(choices=Product.PRODUCT_TYPE_CHOICES)
+    external_price_id = serializers.CharField(max_length=250, read_only=True)
 
     class Meta:
         model = Product
         fields = [
             "id",
+            "name",
             "available_quantity",
             "price",
             "product_type",
-            "book",
-            "book_id",
+            "external_price_id",
         ]
 
 
 class CartItemSerializer(serializers.ModelSerializer):
     queryset = CartItem.objects.all()
 
-    # Nested relationship
-    product_name = serializers.CharField(source="product.book.name", read_only=True)
     product = ProductSerializer()
 
     # improve product relation
@@ -83,10 +75,21 @@ class CartSerializer(serializers.ModelSerializer):
             "id",
             "items",
             "created_at",
-            "checked_out",
+            "checked_out_at",
         ]
 
 
 class AddToCartSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
     quantity = serializers.IntegerField(min_value=1)
+
+
+class DefaultPriceSerializer(serializers.Serializer):
+    currency = serializers.CharField(max_length=3, allow_null=True, default="brl")
+    unit_amount_decimal = serializers.FloatField()
+
+
+class ExternalProductSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False)
+    name = serializers.CharField(max_length=255, required=False)
+    default_price_data = DefaultPriceSerializer(required=False)

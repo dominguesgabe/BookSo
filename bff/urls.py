@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from book.views import BookViewSet, GenreViewSet
-from store.views import CartViewSet, CustomerViewSet, ProductViewSet
+
+from store import views
 from bff.views import api_root
 
 from rest_framework_simplejwt.views import (
@@ -11,11 +11,10 @@ from rest_framework_simplejwt.views import (
 )
 
 router = DefaultRouter()
-router.register(r"books", BookViewSet, basename="book")
-router.register(r"genres", GenreViewSet, basename="genre")
-router.register(r"cart", CartViewSet, basename="cart")
-router.register(r"customers", CustomerViewSet, basename="customer")
-router.register(r"products", ProductViewSet, basename="product")
+router.register(r"cart", views.CartViewSet, basename="cart")
+router.register(r"customers", views.CustomerViewSet, basename="customer")
+router.register(r"products", views.ProductViewSet, basename="product")
+router.register(r"checkout", views.CheckoutViewSet, basename="checkout")
 
 
 urlpatterns = [
