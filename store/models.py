@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from book.models import Book
 
 
 class Customer(models.Model):
@@ -19,30 +18,56 @@ class Cart(models.Model):
         return f"Cart {self.id} - {self.customer.user.username}"
 
 
-class Product(models.Model):
-    # TODO change to literal
-    PHYSICAL = "physical"
-    DIGITAL = "digital"
-    PRODUCT_TYPE_CHOICES = [
-        (PHYSICAL, "Físico"),
-        (DIGITAL, "Digital"),
-    ]
-
-    book = models.ForeignKey(
-        Book,
-        on_delete=models.CASCADE,
-        related_name="product",
+class Category(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+    parent = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="children"
     )
-    available_quantity = models.IntegerField()
-    price = models.FloatField()
-    product_type = models.CharField(
-        max_length=10, choices=PRODUCT_TYPE_CHOICES, default=PHYSICAL
-    )
-    active = models.BooleanField(default=True)
-    external_price_id = models.CharField(max_length=255, null=True)
 
     def __str__(self):
-        return self.book.name
+        return self.name
+
+    def full_path(self):
+        path = [self.name]
+
+        current = self.parent
+
+        while current:
+            path.insert(0, current.name)
+            current = current.parent
+
+        return " > ".join(path)
+
+    class Meta:
+        verbose_name_plural = "categories"
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=350, blank=False)
+    sku = models.CharField(max_length=20, unique=True, blank=False)
+    description = models.TextField(blank=True)
+    language = models.CharField(max_length=50, blank=True, default="Português")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    available_quantity = models.IntegerField()
+    price = models.FloatField()
+    active = models.BooleanField(default=True)
+    external_price_id = models.CharField(max_length=255, null=True)
+    category = models.ForeignKey(
+        Category, on_delete=models.PROTECT, related_name="products"
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="images"
+    )
+    url = models.CharField(blank=False)
+    alt_text = models.CharField(max_length=250, blank=True)
+    is_primary = models.BooleanField(default=False)
 
 
 class CartItem(models.Model):

@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from store.models import Cart, CartItem, Customer, Product
 from django.contrib.auth.models import User
-from book.models import Book
-from book.serializers import BookSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,24 +36,18 @@ class CustomerSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     queryset = Product.objects.all()
 
-    book_id = serializers.PrimaryKeyRelatedField(
-        many=False, source="book", queryset=Book.objects.all(), write_only=True
-    )
-    book = BookSerializer(read_only=True)
     available_quantity = serializers.IntegerField()
     price = serializers.FloatField()
-    product_type = serializers.ChoiceField(choices=Product.PRODUCT_TYPE_CHOICES)
     external_price_id = serializers.CharField(max_length=250, read_only=True)
 
     class Meta:
         model = Product
         fields = [
             "id",
+            "name",
             "available_quantity",
             "price",
             "product_type",
-            "book",
-            "book_id",
             "external_price_id",
         ]
 
@@ -63,8 +55,6 @@ class ProductSerializer(serializers.ModelSerializer):
 class CartItemSerializer(serializers.ModelSerializer):
     queryset = CartItem.objects.all()
 
-    # Nested relationship
-    product_name = serializers.CharField(source="product.book.name", read_only=True)
     product = ProductSerializer()
 
     # improve product relation
@@ -102,5 +92,4 @@ class DefaultPriceSerializer(serializers.Serializer):
 class ExternalProductSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
     name = serializers.CharField(max_length=255, required=False)
-    shippable = serializers.BooleanField(required=False)
     default_price_data = DefaultPriceSerializer(required=False)
