@@ -16,38 +16,38 @@ def create_product(*, payload: dict[str, Any]):
     serializer = ProductSerializer(data=payload)
     serializer.is_valid(raise_exception=True)
 
-    db_book = serializer.validated_data["book"]
+    # db_book = serializer.validated_data["book"]
 
-    db_product = Product.objects.filter(
-        book=db_book, product_type=serializer.validated_data["product_type"]
-    ).exists()
+    # db_product = Product.objects.filter(
+    #     book=db_book, product_type=serializer.validated_data["product_type"]
+    # ).exists()
 
-    if db_product:
-        logger.info(
-            "Product associated to the same book with same type exist on the database"
-        )
-        return Response(
-            status=status.HTTP_400_BAD_REQUEST,
-            data={
-                "product_type": [
-                    "Já existe um produto associado ao livro com o mesmo tipo."
-                ]
-            },
-        )
+    # if db_product:
+    #     logger.info(
+    #         "Product associated to the same book with same type exist on the database"
+    #     )
+    #     return Response(
+    #         status=status.HTTP_400_BAD_REQUEST,
+    #         data={
+    #             "product_type": [
+    #                 "Já existe um produto associado ao livro com o mesmo tipo."
+    #             ]
+    #         },
+    #     )
 
     save_kwargs: dict[str, Any] = {}
-    if serializer.validated_data["product_type"] == Product.DIGITAL:
-        save_kwargs["available_quantity"] = 1
+    # if serializer.validated_data["product_type"] == Product.DIGITAL:
+    #     save_kwargs["available_quantity"] = 1
 
     product = serializer.save(**save_kwargs)
 
     # shouldn't this block wrap everything?
     try:
-        external_price_id = checkout_service.create_product_on_checkout_platform(
-            serializer=serializer
-        )
+        # external_price_id = checkout_service.create_product_on_checkout_platform(
+        #     serializer=serializer
+        # )
 
-        product.external_price_id = external_price_id
+        # product.external_price_id = external_price_id
         product.save()
 
     except stripe.InvalidRequestError:
@@ -71,26 +71,26 @@ def update_product(self, request, *args, **kwargs):
     )
     serializer.is_valid(raise_exception=True)
 
-    if product_type := serializer.validated_data.get("product_type"):
-        db_product = (
-            Product.objects.filter(
-                book=instance.book,
-                product_type=product_type,
-            )
-            .exclude(id=instance.id)
-            .first()
-        )
+    # if product_type := serializer.validated_data.get("product_type"):
+    # db_product = (
+    #     Product.objects.filter(
+    #         book=instance.book,
+    #         product_type=product_type,
+    #     )
+    #     .exclude(id=instance.id)
+    #     .first()
+    # )
 
-        if db_product:
-            logger.info("Found product with same book and type.")
-            return Response(
-                status=status.HTTP_400_BAD_REQUEST,
-                data={
-                    "product_type": [
-                        "Já existe um produto associado ao livro com o mesmo tipo."
-                    ]
-                },
-            )
+    # if db_product:
+    #     logger.info("Found product with same book and type.")
+    #     return Response(
+    #         status=status.HTTP_400_BAD_REQUEST,
+    #         data={
+    #             "product_type": [
+    #                 "Já existe um produto associado ao livro com o mesmo tipo."
+    #             ]
+    #         },
+    #     )
 
     # shouldnt this block wrap everything?
     try:
